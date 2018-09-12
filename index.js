@@ -33,7 +33,7 @@ Character.prototype.befriend = function(target) {
 
 const you = new Character({name: 'You', health: 10, attackingForce: 3, healingRate: 3, friendliness: 5});
 
-const opponent = new Character({name: 'The Monster', health: 6, attackingForce: 5, healingRate: 2, friendliness: 1});
+const opponent = new Character({name: 'The Monster', health: 6, attackingForce: 8, healingRate: 2, friendliness: 1});
 
 document.getElementById("attack").addEventListener('click', function () {
     updateYourMove("You attack! " + you.attack(opponent));
