@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Friends or Fatalities</title>
+</head>
+
+<body>
+    <h1>Friends or Fatalities</h1>
+    <h2>You can either attack your opponent or attempt to make friends.</h2>
+    <h3>Your situation:</h3>
+    <p> Your health: <span id="your-health"></span></p>
+    <p>Your attacking force: <span id="your-attacking-force"></span></p>
+    <p>Your healing rate: <span id="your-healing-rate"></span></p>
+    <p>Your Friendliness: <span id="your-friendliness"></span></p>
+
+    <h3>Your opponent:</h3>
+    <p> Your opponent's health: <span id="their-health"></span></p>
+    <p> Your opponent's attacking force: <span id="their-attacking-force"></span></p>
+    <p>Your opponent's healing rate: <span id="their-healing-rate"></span></p>
+    <p>Your opponent's friendliness: <span id="their-friendliness"></span></p>
+
+    <h2 id="game-status">Your Turn!</h2>
+
+    <button id="attack">Attack!</button>
+    <button id="heal">Heal yourself</button>
+    <button id="make-friends">Attempt to make friends</button>
+    <div id="your-move"></div>
+    <div id="opponents-move"></div>
+    <div id="game-over"></div>
+    <script src="index.js"></script>
+</body>
+
+</html>
