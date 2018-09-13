@@ -42,7 +42,7 @@ document.getElementById("attack").addEventListener('click', function () {
 
 document.getElementById("heal").addEventListener("click", function () {
     updateYourMove("You heal yourself.  " + you.heal());
-    handleOpponenetsTurn(); 
+    handleOpponentsTurn(); 
 });
 
 document.getElementById("make-friends").addEventListener('click', function () {
