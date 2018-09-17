@@ -1,11 +1,12 @@
 let isGameActive = true;
 
-const Character = function ({name, health, attackingForce, healingRate, friendliness}) {
-    this.name = name,
-    this.health = health,
-    this.attackingForce = attackingForce;
-    this.healingRate = healingRate;
-    this.friendliness = friendliness;
+/* Character base type */
+
+function Character(options) {
+    this.name = options.name,
+    this.health = options.health,
+    this.attackingForce = options.attackingForce;
+    this.healingRate = options.healingRate;
     this.friendsList = [];
 }
 
@@ -15,14 +16,19 @@ Character.prototype.attack = function(target) {
     return `${forceOfThisAttack} damage dealt!`;
 }
 
-Character.prototype.heal = function() {
-    const forceOfThisHealing = Math.random() * this.healingRate;
-    this.health += forceOfThisHealing; 
-    return `${forceOfThisHealing} healing!`;
+/* Hero -- subtype of Character */
+
+function Hero(options) {
+    Character.call(this, options);
+    this.friendliness = options.friendliness;
 }
 
-Character.prototype.befriend = function(target) {
-    if (this.friendliness * Math.random() + target.friendliness * Math.random() > 5) {
+Hero.prototype = Object.create(Character.prototype);
+Hero.prototype.constructor = Hero;
+
+Hero.prototype.befriend = function(target) {
+    const targetFriendliness = target.friendliness || 0;
+    if (this.friendliness * Math.random() + targetFriendliness * Math.random() >3.5) {
         this.friendsList.push(target);
         target.friendsList.push(this);
         return `Whoa!  ${this.name} and ${target.name} are friends now!`;
@@ -31,12 +37,39 @@ Character.prototype.befriend = function(target) {
     }
 }
 
-const you = new Character({name: 'You', health: 10, attackingForce: 3, healingRate: 3, friendliness: 5});
+Hero.prototype.healOneself = function() {
+    const forceOfThisHealing = Math.random() * this.healingRate;
+    this.health += forceOfThisHealing; 
+    return `${forceOfThisHealing} healing!`;
+}
 
-const opponent = new Character({name: 'The Monster', health: 6, attackingForce: 15, healingRate: 2, friendliness: 1});
+/* Monster -- subtype of Character */
+
+function Monster(options) {
+    Character.call(this, options);
+    this.wrathFactor = options.wrathFactor;
+}
+
+Monster.prototype = Object.create(Character.prototype);
+Monster.prototype.constructor = Monster;
+
+Monster.prototype.doubleAttack = function(target) {
+    const forceOfThisAttack = Math.random() * this.attackingForce * this.wrathFactor;
+    target.health -= forceOfThisAttack;
+    let damageTaken = 0;
+    if (target.health > 0) {
+        damageTaken = Math.random() * target.attackingForce;
+        this.health -= damageTaken;
+    }
+    return `Reckless Assault!  ${forceOfThisAttack} damage dealt, but ${damageTaken} damage taken!`; 
+}
+
+const you = new Hero({name: 'You', health: 10, attackingForce: 3, healingRate: 3, friendliness: 5});
+
+const monster = new Monster({name: 'The Monster', health: 6, attackingForce: 5, healingRate: 2, wrathFactor: 1.6});
 
 document.getElementById("attack").addEventListener('click', function () {
-    updateYourMove("You attack! " + you.attack(opponent));
+    updateYourMove("You attack! " + you.attack(monster));
     handleOpponentsTurn();
 });
 
@@ -46,7 +79,7 @@ document.getElementById("heal").addEventListener("click", function () {
 });
 
 document.getElementById("make-friends").addEventListener('click', function () {
-    updateYourMove("You try to make friends. " + you.befriend(opponent));
+    updateYourMove("You try to make friends. " + you.befriend(monster));
     handleOpponentsTurn(); 
 });
 
@@ -60,15 +93,13 @@ function handleOpponentsTurn() {
 }
 
 function opponentPlays() {
-    const actionChoice = Math.floor(Math.random() * 3);
+    const actionChoice = Math.floor(Math.random() * 2);
     let resultString = "";
     if (actionChoice === 0) {
-        resultString = `${opponent.name} attacks! 
-        ${opponent.attack(you)}`;
+        resultString = `${monster.name} attacks! 
+        ${monster.attack(you)}`;
     } else if (actionChoice === 1) {
-        resultString = `${opponent.name} heals.  ${opponent.heal()}`;
-    } else if (actionChoice === 2) {
-        resultString = `${opponent.name} tries to make friends.  ${opponent.befriend(you)}`;
+        resultString = `${monster.name} risks itself to destroy you.  ${monster.doubleAttack(you)}`;
     }
     updateOpponentMove(resultString);
     updateYourMove();
@@ -101,20 +132,20 @@ function updateOpponentMove(resultString) {
 
     const opponentMove = document.getElementById("opponents-move");
 
-    opponentHealth.innerText = opponent.health;
-    opponentAttackingForce.innerText = opponent.attackingForce;
-    opponentHealingRate.innerText = opponent.healingRate;
-    opponentFriendliness.innerText = opponent.friendliness;
+    opponentHealth.innerText = monster.health;
+    opponentAttackingForce.innerText = monster.attackingForce;
+    opponentHealingRate.innerText = monster.healingRate;
+    opponentFriendliness.innerText = monster.friendliness || 0;
 
     opponentMove.innerText = resultString;
 }
 
 function checkGame() {
     const endNode = document.getElementById("game-over");
-    if (opponent.friendsList.length > 0) {
+    if (monster.friendsList.length > 0) {
         isGameActive = false;
         endNode.innerText = "Game Over.  Everyone is friends!";
-    } else if (opponent.health <= 0) {
+    } else if (monster.health <= 0) {
         isGameActive = false;
         endNode.innerText = "Game Over.  You killed your opponent!";
     } else if (you.health <= 0) {
