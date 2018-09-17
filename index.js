@@ -37,7 +37,7 @@ Hero.prototype.befriend = function(target) {
     }
 }
 
-Hero.prototype.healOneself = function() {
+Hero.prototype.heal = function() {
     const forceOfThisHealing = Math.random() * this.healingRate;
     this.health += forceOfThisHealing; 
     return `${forceOfThisHealing} healing!`;
